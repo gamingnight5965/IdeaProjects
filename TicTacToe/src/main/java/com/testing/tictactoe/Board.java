@@ -42,7 +42,6 @@ public class Board {
         turns = 0;
         run();
     }
-
     public void train() {
         getFile();
         for(int i =0; i < 3; i++){
@@ -142,16 +141,15 @@ public class Board {
         }
         store();
     }
-
     private void displayBoard() {
-        System.out.println("\n__________________________________");
         System.out.println(" " + board[0][0] + " | " + board[0][1] + " | " + board[0][2]);
         System.out.println(" _________");
         System.out.println(" " + board[1][0] + " | " + board[1][1] + " | " + board[1][2]);
         System.out.println(" _________");
         System.out.println(" " + board[2][0] + " | " + board[2][1] + " | " + board[2][2]);
-        System.out.println();
-
+        for(int i = 0; i < 3; i++){
+            System.out.println();
+        }
     }
 
     private void checkWinState() {
@@ -205,7 +203,6 @@ public class Board {
     }
 
     private void displayMoveBoard(){
-        System.out.println("__________________________________\n\n");
         System.out.println(" " + 1 + " | " + 2 + " | " + 3);
         System.out.println(" _________");
         System.out.println(" " + 4 + " | " + 5 + " | " + 6);
@@ -234,58 +231,58 @@ public class Board {
 
     public void store(){
 
-                String[] data = new String[10];
+                String[] data = new String[19];
                 Arrays.fill(data, "0");
 
                 for(int i = 0; i < 3; i++) {
                     for (int j = 0; j < 3; j++) {
                         if (board[i][j] == 'X') {
-                            data[(i * 3) + j] = "0.5";
-                        } else if (board[i][j] == 'O') {
-                            data[(i * 3) + j] = "1.0";
+                            data[(i * 3) + j] = "1";
+                        } else if (board[i][j] == 'Y') {
+                            data[(i * 3) + j + 9] = "1";
                         }
                     }
                 }
                 if(winner == 'O'){
-                    data[9] = "1.0";
+                    data[18] = "1";
                 }
                 dataAll.add(data);
         }
 
-    public void export(){
-        try {
-            writer.writeAll(dataAll);
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        public void export(){
+            try {
+                writer.writeAll(dataAll);
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        public void getFile() {
+            try {
+                //Get or Create new file called TrainData.csv
+                File file = new File("TrainData.csv");
+                if (file.createNewFile()) {
+                    System.out.println("New file created: " + file.getName() + " at " + file.getPath());
+                }
+
+                // create FileWriter object using file
+                FileWriter fileOutput = new FileWriter(file);
+                // create FileReader object using file
+                FileReader fileInput = new FileReader(file);
+
+                // create CSVWriter using FileWriter object
+                writer = new CSVWriter(fileOutput);
+                // create CSVReader using FileReader object
+                reader = new CSVReader(fileInput);
+                if(reader.readNext() == null) {
+                    String[] header = {"X1", "X2", "X3", "X4", "X5", "X6", "X7", "X8", "X8", "Y1", "Y2", "Y3", "Y4", "Y5", "Y6", "Y7", "Y8", "Y9", "OWin"};
+                    writer.writeNext(header);
+                }
+            }
+        catch(IOException | CsvValidationException e){
+                System.out.println("An error Occurred.");
+                e.printStackTrace();
+            }
         }
     }
 
-    public void getFile() {
-        try {
-            //Get or Create new file called TrainData.csv
-            File file = new File("TrainData.csv");
-            if (file.createNewFile()) {
-                System.out.println("New file created: " + file.getName() + " at " + file.getPath());
-            }
-
-            // create FileWriter object using file
-            FileWriter fileOutput = new FileWriter(file);
-            // create FileReader object using file
-            FileReader fileInput = new FileReader(file);
-
-            // create CSVWriter using FileWriter object
-            writer = new CSVWriter(fileOutput);
-            // create CSVReader using FileReader object
-            reader = new CSVReader(fileInput);
-            if(reader.readNext() == null) {
-                String[] header = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "OWin"};
-                writer.writeNext(header);
-            }
-        }
-    catch(IOException | CsvValidationException e){
-            System.out.println("An error Occurred.");
-            e.printStackTrace();
-        }
-    }
-}
